@@ -3,3 +3,5 @@ INSERT INTO `peliculaserie` VALUES (1,'9','2001-10-12','cdn-img','matrix'),(2,'7
 INSERT INTO `rel_peliculas_personajes` VALUES (1,2),(3,2),(4,2),(1,3),(2,3),(3,4),(4,4),(1,5),(1,6);
 INSERT INTO `genero` VALUES (1,'cdn-img','accion'),(2,'cdn-img','drama'),(3,'cdn-img','terror'),(4,'cdn-img','comedia'),(5,'cdn-img','romance'),(6,'cdn-img','policial');
 INSERT INTO `rel_peliculas_generos` VALUES (1,1),(1,2),(2,3),(3,1),(3,6),(4,1);
+INSERT INTO `usuario` VALUES (1,null,null,null,'$2a$10$wokCtLGyNIY5NGyyUZj19.WhrTv.HHhljyTXT9jOpxg9rOY3E/G3.','ADMIN','admin');
+INSERT INTO `usuario` VALUES (2,null,null,null,'$2a$10$djVM/hzl7er0QrwrmHpLwuXzBxTN65el94.6BRDh2HsFVgB0fU5bm','USER','user');
