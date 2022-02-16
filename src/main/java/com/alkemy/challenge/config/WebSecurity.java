@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import com.alkemy.challenge.filter.JwtAuthorizationFilter;
 import com.alkemy.challenge.model.UserRol;
 //@EnableGlobalMethodSecurity(prePostEnabled = true) # Segundo metodo de autorizacion pero este es prioritario si entran en conflicto
 @EnableWebSecurity( debug = false )
@@ -49,7 +51,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.and()
 			.formLogin().permitAll()
 			.and()
-			.logout().permitAll();
+			.logout().permitAll()
+			.and()
+			.addFilter(jwtAuthorizationFilter());
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
 	@Override
@@ -68,7 +73,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() { 
 	    return new BCryptPasswordEncoder(); 
 	}
-
+	
+	@Bean
+	public JwtAuthorizationFilter jwtAuthorizationFilter()throws Exception{
+		return new JwtAuthorizationFilter(this.authenticationManager());
+	}
+	
 	/*@Bean
 	@Override
 	public UserDetailsService userDetailsService() {
