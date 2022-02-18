@@ -1,5 +1,6 @@
 package com.alkemy.challenge.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -63,11 +65,17 @@ public class UsuarioEndpoint {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	//@PreAuthorize("authenticated")
 	@PostMapping(UsuarioEndpoint.LOGIN)// Rearmar el Login con los token
-	public ResponseEntity<String> loginUser(@RequestBody UsuarioModel user) {
+	public ResponseEntity<String> loginUser(@AuthenticationPrincipal UserDetails user) {
 		try {	
-		
-			String token =jwtService.CreateToken(user.getUsername(),Arrays.asList("ROLE_USER"));
+			logger.info("USER: "+user.getUsername());
+			ArrayList<String> roles = new ArrayList<String>();
+			for (GrantedAuthority auth : user.getAuthorities()) {
+				logger.info("AUTHORITIES: "+auth);
+				roles.add(auth.toString());
+			}
+			String token =jwtService.CreateToken(user.getUsername(),roles);
 			
 			return new ResponseEntity<>(token, HttpStatus.OK);
 		} catch (Exception e) {
