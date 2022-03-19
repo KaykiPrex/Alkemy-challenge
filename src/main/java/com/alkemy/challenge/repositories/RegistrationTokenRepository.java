@@ -1,5 +1,6 @@
 package com.alkemy.challenge.repositories;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,15 +9,14 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alkemy.challenge.model.UsuarioModel;
+import com.alkemy.challenge.model.RegistrationTokenModel;
 
 @Repository
-public interface UsuarioRepository extends CrudRepository<UsuarioModel,Long> {
-	public abstract Optional<UsuarioModel> findByUsername(String username);
-	
+public interface RegistrationTokenRepository extends CrudRepository<RegistrationTokenModel,Long>{
+	Optional<RegistrationTokenModel> findByToken(String token);
 	@Transactional
 	@Modifying
-	@Query("UPDATE UsuarioModel u SET u.enable = true WHERE u.username = ?1")
-	public abstract void updateEnabled(String username);
+	@Query("UPDATE RegistrationTokenModel t SET t.confirmedAt = ?2 WHERE t.token = ?1")
+	int updateConfirmedAt(String token, LocalDateTime now);
 
 }

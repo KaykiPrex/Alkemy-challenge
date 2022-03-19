@@ -22,7 +22,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import com.alkemy.challenge.filter.JwtAuthorizationFilter;
 import com.alkemy.challenge.model.UserRol;
-//@EnableGlobalMethodSecurity(prePostEnabled = true) # Segundo metodo de autorizacion pero este es prioritario si entran en conflicto
+@EnableGlobalMethodSecurity(prePostEnabled = true) // # Segundo metodo de autorizacion pero este es prioritario si entran en conflicto
 @EnableWebSecurity( debug = false )
 @Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -37,10 +37,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.httpBasic()
 			.and()
 			.authorizeRequests()
-			.mvcMatchers("/users/register").permitAll()
+			.mvcMatchers("/auth/register").permitAll()
 			.mvcMatchers(HttpMethod.GET,"/movies").hasAnyRole(UserRol.USER.toString(),UserRol.ADMIN.toString())
 			.mvcMatchers(HttpMethod.GET,"/characters").hasAnyRole(UserRol.USER.toString(),UserRol.ADMIN.toString())
-			.mvcMatchers("/users/register-admin").hasRole(UserRol.ADMIN.toString())
+			.mvcMatchers("/auth/register-admin").hasRole(UserRol.ADMIN.toString())
 			.mvcMatchers(HttpMethod.POST,"/movies").hasRole(UserRol.ADMIN.toString())
 			.mvcMatchers(HttpMethod.POST,"/characters").hasRole(UserRol.ADMIN.toString())
 			.mvcMatchers(HttpMethod.DELETE,"/movies").hasRole(UserRol.ADMIN.toString())

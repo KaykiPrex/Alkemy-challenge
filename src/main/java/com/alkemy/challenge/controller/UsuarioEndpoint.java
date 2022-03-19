@@ -16,9 +16,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alkemy.challenge.model.UsuarioModel;
@@ -34,6 +36,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 @RequestMapping(UsuarioEndpoint.AUTH)
 public class UsuarioEndpoint {
 	public static final String AUTH ="/auth";
+	
+	public static final String CONFIRMATION ="/confirmation";
 	public static final String REGISTER ="/register";
 	public static final String REGISTER_ADMIN ="/register-admin";
 	public static final String LOGIN ="/login";
@@ -44,12 +48,15 @@ public class UsuarioEndpoint {
 	CustomUserDetailService userDetailService;
 	@Autowired
 	private JwtService jwtService;
-	//@PreAuthorize("permitAll()")
+	@PreAuthorize("permitAll()")
 	@PostMapping(UsuarioEndpoint.REGISTER)//Rearmar el registro y deshabilitar los filtros para esta uri
 	public ResponseEntity<UsuarioModel> createUser(@RequestBody UsuarioModel user ) {
 		try {
+			if(usuarioService.isUsernameValid(user.getUsername())) {				
 			UsuarioModel u = usuarioService.saveUser(user);
-			return new ResponseEntity<>(u, HttpStatus.CREATED);
+			return ResponseEntity.status(HttpStatus.CREATED).body(u);
+			}
+			return new ResponseEntity<>(HttpStatus.CONFLICT); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -82,4 +89,9 @@ public class UsuarioEndpoint {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@GetMapping(UsuarioEndpoint.CONFIRMATION)
+    public String confirm(@RequestParam("token") String token) {
+        return usuarioService.confirmationToken(token);
+    }
 }
